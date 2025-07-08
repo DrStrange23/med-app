@@ -1,11 +1,12 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = ({ handleClick }) => {
   return (
     <nav>
       <div className="nav__logo">
-        <a href="/">
+        <NavLink to="/" className="logo-link">
           StayHealthy{' '}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -23,32 +24,46 @@ const Navbar = ({ handleClick }) => {
               </g>
             </g>
           </svg>
-        </a>
+        </NavLink>
         <span>.</span>
       </div>
 
-      {/* Icono de menú, usa el prop handleClick */}
       <div className="nav__icon" onClick={handleClick}>
         <i className="fa fa-times fa-bars" />
       </div>
 
-      {/* Lista de enlaces */}
       <ul className="nav__links active">
         <li className="link">
-          <a href="../Landing_Page/LandingPage.html">Home</a>
+          <NavLink
+            to="/"
+            className={({ isActive }) => (isActive ? 'link active' : 'link')}
+          >
+            Home
+          </NavLink>
         </li>
         <li className="link">
-          <a href="#">Appointments</a>
+          <NavLink
+            to="/appointments"
+            className={({ isActive }) => (isActive ? 'link active' : 'link')}
+          >
+            Appointments
+          </NavLink>
         </li>
         <li className="link">
-          <a href="../Sign_Up/Sign_Up.html">
+          <NavLink
+            to="/signup"
+            className={({ isActive }) => (isActive ? 'link active' : 'link')}
+          >
             <button className="btn1">Sign Up</button>
-          </a>
+          </NavLink>
         </li>
         <li className="link">
-          <a href="../Login/Login.html">
+          <NavLink
+            to="/login"
+            className={({ isActive }) => (isActive ? 'link active' : 'link')}
+          >
             <button className="btn1">Login</button>
-          </a>
+          </NavLink>
         </li>
       </ul>
     </nav>

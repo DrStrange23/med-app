@@ -4,6 +4,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar/Navbar';
 import Landing_Page from './components/Landing_Page/Landing_Page';
+import Login from './components/Login/Login';
+import Sign_Up from './components/Sign_Up/Sign_Up';
 
 function App() {
   return (
@@ -12,10 +14,12 @@ function App() {
         <BrowserRouter>
           {/* Mostrar el componente Navbar */}
           <Navbar/>
-          <Landing_Page />
           {/* Configurar las Rutas para diferentes páginas */}
           <Routes>
             {/* Definir componentes Route individuales para diferentes páginas */}
+            <Route path="/" element={<Landing_Page />} />
+            <Route path="/signup" element={<Sign_Up />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>
     </div>

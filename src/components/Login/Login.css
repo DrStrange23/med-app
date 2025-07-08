@@ -1,55 +1,119 @@
-/* Styles for the main container */
+/* Contenedor principal centrado y responsivo */
 .container {
-    max-width: 900px; /* Maximum width of the container */
-    margin: 0 auto; /* Center the container horizontally */
-    padding: 40px; /* Padding inside the container */
-    margin-top: 10%; /* Top margin of 10% */
-}
-
-/* Styles for form groups */
-.form-group {
-    margin-bottom: 20px; /* Bottom margin for spacing between form groups */
-}
-
-/* Styles for form group labels */
-.form-group label {
-    display: block; /* Make labels display as block elements */
-    margin-bottom: 5px; /* Bottom margin for spacing below labels */
-    font-weight: bold; /* Bold text for labels */
-}
-
-/* Styles for form controls */
-.form-control {
-    width: 40%; /* Width of form controls */
-    padding: 8px; /* Padding inside form controls */
-    font-size: 16px; /* Font size of form controls */
-    border: 1px solid #ccc; /* Border around form controls */
-    border-radius: 4px; /* Border radius for rounded corners */
-}
-
-/* Styles for button groups */
-.btn-group {
-    margin-top: .0001px; /* Top margin for spacing above button groups */
-    margin-bottom: 20px; /* Bottom margin for spacing below button groups */
-}
-
-/* Styles for buttons */
-.btn {
-    padding: 10px 20px; /* Padding inside buttons */
-    font-size: 16px; /* Font size of buttons */
-    border: none; /* No border for buttons */
-    border-radius: 4px; /* Border radius for rounded corners on buttons */
-    cursor: pointer; /* Cursor style on hover for buttons */
-}
-
-/* Styles for primary buttons */
-.btn-primary {
-    background-color: #007bff; /* Background color for primary buttons */
-    color: #fff; /* Text color for primary buttons */
-}
-
-/* Styles for danger (red) buttons */
-.btn-danger {
-    background-color: #dc3545; /* Background color for danger buttons */
-    color: #fff; /* Text color for danger buttons */
-}
+    max-width: 500px;
+    width: 90%;
+    margin: 10% auto 0;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Títulos centrados */
+  .login-text {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  /* Formulario: ocupa todo el ancho */
+  .login-form {
+    width: 100%;
+  }
+  
+  /* Cada grupo de campo */
+  .login-form .form-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+  
+  /* Etiquetas alineadas a la izquierda */
+  .login-form .form-group label {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  /* Campos de entrada de ancho completo */
+  .login-form .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  /* Estado de foco en inputs */
+  .login-form .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
+  
+  /* Mensajes de error centrados */
+  .login-form .error {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #dc3545;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+  
+  /* Inputs con error resaltados */
+  .login-form .error-input {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+  }
+  
+  /* Grupo de botones flexibles */
+  .login-form .btn-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  /* Botones de ancho completo */
+  .login-form .btn {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+  }
+  
+  /* Botón primario */
+  .login-form .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .login-form .btn-primary:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+  }
+  
+  /* Botón de reset/peligro */
+  .login-form .btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .login-form .btn-danger:hover {
+    background-color: #c82333;
+  }
