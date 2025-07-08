@@ -1,8 +1,13 @@
 // src/Sign_Up/Sign_Up.js
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { API_URL } from "../../config";
 import "./Sign_Up.css";
 
 const Sign_Up = () => {
+  const navigate = useNavigate();
+
+  // Form state
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -11,81 +16,77 @@ const Sign_Up = () => {
     confirmPassword: "",
   });
 
+  // Validation & UX state
   const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({
-    name: false,
-    phone: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
-  });
+  const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-  // Regex para validaciones
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-  const phoneRegex = /^\d{10}$/;
-
-  // Actualiza campos
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  // Regex rules
+  const validators = {
+    name: (val) => val.trim() ? null : "El nombre es obligatorio.",
+    phone: (val) => /^\d{10}$/.test(val) ? null : "El teléfono debe tener 10 dígitos.",
+    email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? null : "Email inválido.",
+    password: (val) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(val)
+      ? null
+      : "La contraseña debe tener ≥8 carac., mayúscula, min., dígito y especial.",
+    confirmPassword: (val) => val === form.password ? null : "Las contraseñas no coinciden.",
   };
 
-  // Marca campo como tocado
-  const handleBlur = (e) => {
-    const { name } = e.target;
+  // Handle change & blur
+  const handleChange = ({ target: { name, value } }) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleBlur = ({ target: { name } }) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
   };
 
-  // Valida todo el formulario
-  const validate = () => {
-    const errs = {};
-    if (!form.name.trim()) {
-      errs.name = "El nombre es obligatorio.";
-    }
-    if (!phoneRegex.test(form.phone)) {
-      errs.phone = "El teléfono debe tener exactamente 10 dígitos.";
-    }
-    if (!emailRegex.test(form.email)) {
-      errs.email = "Email inválido.";
-    }
-    if (!passwordRegex.test(form.password)) {
-      errs.password =
-        "La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula, 1 dígito y 1 carácter especial.";
-    }
-    if (form.confirmPassword !== form.password) {
-      errs.confirmPassword = "Las contraseñas no coinciden.";
-    }
-    return errs;
-  };
-
-  // Efecto: valida en vivo
+  // Validate form
   useEffect(() => {
-    const validationErrors = validate();
+    const validationErrors = Object.keys(validators).reduce((acc, field) => {
+      const error = validators[field](form[field]);
+      if (error) acc[field] = error;
+      return acc;
+    }, {});
     setErrors(validationErrors);
-    setIsFormValid(Object.keys(validationErrors).length === 0);
   }, [form]);
+
+  // Register API call
+  const register = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await response.json();
+      if (data.authtoken) {
+        sessionStorage.setItem("auth-token", data.authtoken);
+        ["name", "phone", "email"].forEach((key) =>
+          sessionStorage.setItem(key, form[key])
+        );
+        navigate("/");
+        window.location.reload();
+      } else {
+        setServerError(
+          data.errors?.map((e) => e.msg).join(" ") || data.error || "Error desconocido"
+        );
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      setServerError("No se pudo conectar al servidor.");
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Marcar todos como tocados
-    setTouched({
-      name: true,
-      phone: true,
-      email: true,
-      password: true,
-      confirmPassword: true,
-    });
-
-    const validationErrors = validate();
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length === 0) {
-      // Lógica de registro
-      console.log("Registrando usuario:", form);
+    setTouched(
+      Object.keys(form).reduce((acc, field) => ({ ...acc, [field]: true }), {})
+    );
+    if (Object.keys(errors).length === 0) {
+      register();
     } else {
       setIsSubmitting(false);
     }
@@ -97,129 +98,50 @@ const Sign_Up = () => {
         <h1>Sign Up</h1>
       </div>
       <div className="signup-text1">
-        Already a member?{' '}
-        <a href="/login" className="link-text">
-          Login
-        </a>
+        Already a member? <Link to="/login" className="link-text">Login</Link>
       </div>
-      <div className="signup-form">
-        <form onSubmit={handleSubmit} noValidate>
-          {/* Nombre */}
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
+      <form className="signup-form" onSubmit={handleSubmit} noValidate>
+        {serverError && <div className="error server-error">{serverError}</div>}
+        {Object.keys(form).map((field) => (
+          <div className="form-group" key={field}>
+            <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
             <input
-              name="name"
-              id="name"
-              type="text"
-              className={`form-control${errors.name && (touched.name || isSubmitting) ? ' error-input' : ''}`}
-              placeholder="Enter your name"
-              value={form.name}
+              id={field}
+              name={field}
+              type={field.toLowerCase().includes("password") ? "password" : "text"}
+              className={`form-control${errors[field] && touched[field] ? " error-input" : ""}`}
+              placeholder={`Enter your ${field}`}
+              value={form[field]}
               onChange={handleChange}
               onBlur={handleBlur}
+              {...(field === "phone" && { inputMode: "numeric", maxLength: 10 })}
             />
-            {(touched.name || isSubmitting) && errors.name && (
-              <small className="error">{errors.name}</small>
+            {touched[field] && errors[field] && (
+              <small className="error">{errors[field]}</small>
             )}
           </div>
-
-          {/* Teléfono */}
-          <div className="form-group">
-            <label htmlFor="phone">Phone</label>
-            <input
-              name="phone"
-              id="phone"
-              type="text"
-              inputMode="numeric"
-              maxLength={10}
-              className={`form-control${errors.phone && (touched.phone || isSubmitting) ? ' error-input' : ''}`}
-              placeholder="1234567890"
-              value={form.phone}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {(touched.phone || isSubmitting) && errors.phone && (
-              <small className="error">{errors.phone}</small>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              name="email"
-              id="email"
-              type="email"
-              className={`form-control${errors.email && (touched.email || isSubmitting) ? ' error-input' : ''}`}
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {(touched.email || isSubmitting) && errors.email && (
-              <small className="error">{errors.email}</small>
-            )}
-          </div>
-
-          {/* Contraseña */}
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              name="password"
-              id="password"
-              type="password"
-              className={`form-control${errors.password && (touched.password || isSubmitting) ? ' error-input' : ''}`}
-              placeholder="Enter your password"
-              value={form.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {(touched.password || isSubmitting) && errors.password && (
-              <small className="error">{errors.password}</small>
-            )}
-          </div>
-
-          {/* Confirmar contraseña */}
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              name="confirmPassword"
-              id="confirmPassword"
-              type="password"
-              className={`form-control${errors.confirmPassword && (touched.confirmPassword || isSubmitting) ? ' error-input' : ''}`}
-              placeholder="Repeat your password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {(touched.confirmPassword || isSubmitting) && errors.confirmPassword && (
-              <small className="error">{errors.confirmPassword}</small>
-            )}
-          </div>
-
-          {/* Botones */}
-          <div className="btn-group">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={!isFormValid || isSubmitting}
-            >
-              {isSubmitting ? "Enviando..." : "Submit"}
-            </button>
-            <button
-              type="reset"
-              className="btn btn-danger"
-              onClick={() => {
-                setForm({ name: "", phone: "", email: "", password: "", confirmPassword: "" });
-                setErrors({});
-                setTouched({ name: false, phone: false, email: false, password: false, confirmPassword: false });
-                setIsSubmitting(false);
-              }}
-            >
-              Reset
-            </button>
-          </div>
-        </form>
-      </div>
+        ))}
+        <div className="btn-group">
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isSubmitting || Object.keys(errors).length > 0}
+          >
+            {isSubmitting ? "Enviando..." : "Submit"}
+          </button>
+          <button
+            type="reset"
+            className="btn btn-danger"
+            onClick={() => {
+              setForm({ name: "", phone: "", email: "", password: "", confirmPassword: "" });
+              setTouched({});
+              setErrors({});
+            }}
+          >
+            Reset
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
