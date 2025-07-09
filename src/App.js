@@ -6,6 +6,7 @@ import Navbar from './components/Navbar/Navbar';
 import Landing_Page from './components/Landing_Page/Landing_Page';
 import Login from './components/Login/Login';
 import Sign_Up from './components/Sign_Up/Sign_Up';
+import InstantConsultation from './components/InstantConsultation/InstantConsultation';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<Landing_Page />} />
             <Route path="/signup" element={<Sign_Up />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/instant-consultation" element={<InstantConsultation />} />
           </Routes>
         </BrowserRouter>
     </div>
