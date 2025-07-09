@@ -5,6 +5,7 @@ import AppointmentForm from '../AppointmentForm/AppointmentForm';
 import './DoctorCard.css';
 import { v4 as uuidv4 } from 'uuid';
 
+
 const DoctorCard = ({ name, speciality, experience, ratings, profilePic }) => {
   const [showModal, setShowModal] = useState(false);
   const [appointments, setAppointments] = useState([]);
