@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
 
 const AppointmentForm = ({ doctorName, doctorSpeciality, onSubmit }) => {
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [date, setDate] = useState('');
+  const [form, setForm] = useState({
+    name: '',
+    phoneNumber: '',
+    date: '',
+    time: '',
+  });
 
-  // Prevent selecting past dates
+  // No permitir fechas pasadas
   const today = new Date().toISOString().split('T')[0];
 
-  const handleSlotSelection = (slot) => {
-    setSelectedSlot(slot);
+  // Franjas horarias de ejemplo
+  const slots = ['09:00', '10:00', '11:00', '14:00', '15:00'];
+
+  const handleChange = ({ target: { name, value } }) => {
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ name, phoneNumber, date, time: selectedSlot });
-    setName('');
-    setPhoneNumber('');
-    setDate('');
-    setSelectedSlot(null);
+    onSubmit(form);
+    setForm({ name: '', phoneNumber: '', date: '', time: '' });
   };
-
-  // Example time slots
-  const slots = ['09:00', '10:00', '11:00', '14:00', '15:00'];
 
   return (
     <form onSubmit={handleFormSubmit} className="appointment-form">
@@ -31,63 +30,71 @@ const AppointmentForm = ({ doctorName, doctorSpeciality, onSubmit }) => {
         Book with Dr. {doctorName} ({doctorSpeciality})
       </h4>
 
+      {/* Nombre */}
       <div className="form-group">
         <label htmlFor="name">Name:</label>
         <input
-          type="text"
           id="name"
           name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          type="text"
+          value={form.name}
+          onChange={handleChange}
           required
         />
       </div>
 
+      {/* Teléfono */}
       <div className="form-group">
         <label htmlFor="phoneNumber">Phone Number:</label>
         <input
-          type="tel"
           id="phoneNumber"
           name="phoneNumber"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          type="tel"
+          value={form.phoneNumber}
+          onChange={handleChange}
           required
         />
       </div>
 
+      {/* Fecha */}
       <div className="form-group">
         <label htmlFor="date">Date:</label>
         <input
-          type="date"
           id="date"
           name="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          type="date"
+          value={form.date}
+          onChange={handleChange}
           min={today}
           required
         />
       </div>
 
+      {/* Menú desplegable de franjas horarias */}
       <div className="form-group">
-        <label>Time Slot:</label>
-        <div className="slots-container">
+        <label htmlFor="time">Time Slot:</label>
+        <select
+          id="time"
+          name="time"
+          value={form.time}
+          onChange={handleChange}
+          required
+        >
+          <option value="" disabled>
+            Select a time
+          </option>
           {slots.map((slot) => (
-            <button
-              key={slot}
-              type="button"
-              className={`slot-btn ${selectedSlot === slot ? 'selected' : ''}`}
-              onClick={() => handleSlotSelection(slot)}
-            >
+            <option key={slot} value={slot}>
               {slot}
-            </button>
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
       <button
         type="submit"
         className="btn btn-primary"
-        disabled={!selectedSlot || !date}
+        disabled={!form.date || !form.time}
       >
         Book Now
       </button>
