@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FindDoctorSearch.css';
 
-const SPECIALITIES = [
+const INIT_SPECIALITIES = [
   'Dentist',
   'Gynecologist/Obstetrician',
   'General Physician',
@@ -15,68 +15,81 @@ const SPECIALITIES = [
 export default function FindDoctorSearch() {
   const [query, setQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
+  const [specialities] = useState(INIT_SPECIALITIES);
   const navigate = useNavigate();
   const containerRef = useRef(null);
 
   const handleSelect = (speciality) => {
     setQuery(speciality);
     setShowResults(false);
-    navigate(`/instant-consultation?speciality=${encodeURIComponent(speciality)}`);
+    navigate(`/BookingConsultation?speciality=${encodeURIComponent(speciality)}`);
+    window.location.reload();
   };
 
-  const filtered = SPECIALITIES.filter((s) =>
-    s.toLowerCase().includes(query.toLowerCase())
-  );
-
+  // Hide dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
+    const onClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
         setShowResults(false);
       }
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
   }, []);
 
   return (
-    <div className="find-doctor" ref={containerRef}>
-      <h1 className="find-doctor__title">Find a doctor and consult instantly</h1>
-      <div className="find-doctor__icon">
+    <div className="finddoctor" ref={containerRef}>
+      <h1>Find a doctor and Consult instantly</h1>
+      <div className="finddoctor__icon">
         <i className="fa fa-user-md" aria-hidden="true" />
       </div>
-      <div className="find-doctor__search">
-        <input
-          type="text"
-          className="find-doctor__input"
-          placeholder="Search doctors, clinics, hospitals, etc."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setShowResults(true)}
-          onBlur={() => setShowResults(false)}
-        />
-        <div
-          className="find-doctor__results"
-          hidden={!showResults || filtered.length === 0}
-        >
-          {filtered.map((speciality) => (
-            <div
-              key={speciality}
-              className="find-doctor__result-item"
-              onMouseDown={() => handleSelect(speciality)}
-            >
-              <div className="find-doctor__result-icon">
-                🔍
-              </div>
-              <span className="find-doctor__result-main">{speciality}</span>
-              <span className="find-doctor__result-sub">SPECIALITY</span>
-            </div>
-          ))}
+
+      <div className="home-search-container">
+        <div className="doctor-search-box">
+          <input
+            type="text"
+            className="search-doctor-input-box"
+            placeholder="Search doctors, clinics, hospitals, etc."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setShowResults(true)}
+          />
+
+          <div className="findiconimg">
+            <img
+              className="findIcon"
+              src={`${process.env.PUBLIC_URL}/images/search.svg`}
+              alt="search icon"
+            />
+          </div>
+
+          <div
+            className="search-doctor-input-results"
+            hidden={!showResults}
+          >
+            {specialities
+              .filter((s) =>
+                s.toLowerCase().includes(query.toLowerCase())
+              )
+              .map((speciality) => (
+                <div
+                  key={speciality}
+                  className="search-doctor-result-item"
+                  onMouseDown={() => handleSelect(speciality)}
+                >
+                  <span>
+                    <img
+                      src={`${process.env.PUBLIC_URL}/images/search.svg`}
+                      alt=""
+                      width="12"
+                      height="12"
+                    />
+                  </span>
+                  <span>{speciality}</span>
+                  <span className="result-label">SPECIALITY</span>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>
