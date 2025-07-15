@@ -1,0 +1,57 @@
+.appointment-card {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 300px;
+    background-color: #fff;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 1000;
+    animation: notification-slide-in 0.3s ease-out;
+  }
+  
+  /* Animación de entrada */
+  @keyframes notification-slide-in {
+    from {
+      transform: translateX(120%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Contenido interno */
+  .appointment-card__content {
+    padding: 1rem;
+  }
+  
+  /* Título */
+  .appointment-card__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #007bff;
+  }
+  
+  /* Mensaje: cada campo en párrafo separado */
+  .appointment-card__message {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #333;
+  }
+  
+  .appointment-card__message strong {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Espacio extra debajo del contenido principal */
+  .appointment-card + * {
+    margin-top: 4rem;
+  }

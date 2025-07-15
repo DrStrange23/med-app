@@ -8,6 +8,7 @@ import Login from './components/Login/Login';
 import Sign_Up from './components/Sign_Up/Sign_Up';
 import InstantConsultation from './components/InstantConsultation/InstantConsultation';
 import BookingConsultation from './components/BookingConsultation';
+import Notification from './components/Notification/Notification';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/instant-consultation" element={<InstantConsultation />} />
             <Route path="/BookingConsultation" element={<BookingConsultation />} />
+            <Route path="/Notification" element={<Notification />} />
           </Routes>
         </BrowserRouter>
     </div>
