@@ -1,0 +1,114 @@
+.rm-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+
+/* Card blanca centrada */
+.rm-card {
+  background: #f7f7f7;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 320px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+/* Título */
+.rm-card h3 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* Formulario interno */
+.rm-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rm-card label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.rm-card input[readonly] {
+  background: #e9ecef;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.rm-card textarea {
+  resize: vertical;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Estrellas de rating */
+.rm-stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #ccc;
+  user-select: none;
+}
+
+.star.filled {
+  color: #f5c518;
+}
+
+/* Botones */
+.rm-btn-save,
+.rm-btn-cancel {
+  width: 100%;
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.rm-btn-save {
+  background: #007bff;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.rm-btn-cancel {
+  background: transparent;
+  color: #333;
+  border: 1px solid #333;
+}
+
+.btn-feedback {
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-feedback:hover:not(:disabled) {
+  background-color: #0069d9;
+}
+
+.btn-feedback:disabled {
+  background-color: #ccc;    /* gris claro */
+  color: #666;               /* texto oscuro, pero tenue */
+  cursor: default;           /* ya no pointer */
+  opacity: 1;                /* mantiene opacidad normal */
+}
