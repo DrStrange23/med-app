@@ -1,0 +1,27 @@
+@import '../ReviewForm/ReviewForm.css';
+
+/* Anula el striping para la fila de estado vacío */
+.review-table tbody tr.no-data td {
+  background-color: #fff;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+/* Opcional: refina un poco el padding si lo deseas */
+.review-table th,
+.review-table td {
+  padding: 0.75rem;
+}
+
+.review-table td,
+.review-table th {
+  vertical-align: middle;
+}
+
+.review-table td .btn-feedback {
+  display: block;      /* hace que el botón sea un bloque */
+  width: 100%;         /* ocupa todo el ancho de la celda */
+  box-sizing: border-box;
+  text-align: center;  /* centrar el texto dentro del botón */
+  margin: 0;           /* sin márgenes extra */
+}
