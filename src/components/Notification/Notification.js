@@ -1,67 +1,58 @@
-// Following code has been commented with appropriate comments for your reference.
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import './Notification.css';
 
-// Function component Notification to display user notifications
 const Notification = ({ children }) => {
-  // State variables to manage user authentication, username, doctor data, and appointment data
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
-  const [doctorData, setDoctorData] = useState(null);
-  const [appointmentData, setAppointmentData] = useState(null);
+  const [visible, setVisible] = useState(true);
+  const [appointments, setAppointments] = useState([]);
+  const location = useLocation();
 
-  // useEffect hook to perform side effects in the component
+  const loadAppointments = () => {
+    const stored = JSON.parse(sessionStorage.getItem('appointments')) || [];
+    setAppointments(stored);
+  };
+
+  // Carga inicial y al cambiar de ruta
   useEffect(() => {
-    // Retrieve stored username, doctor data, and appointment data from sessionStorage and localStorage
-    const storedUsername = sessionStorage.getItem('email');
-    const storedDoctorData = JSON.parse(localStorage.getItem('doctorData'));
-    const storedAppointmentData = JSON.parse(localStorage.getItem(storedDoctorData?.name));
+    loadAppointments();
+  }, [location]);
 
-    // Set isLoggedIn state to true and update username if storedUsername exists
-    if (storedUsername) {
-      setIsLoggedIn(true);
-      setUsername(storedUsername);
-    }
+  // Escucha eventos de actualización
+  useEffect(() => {
+    window.addEventListener('sessionStorageUpdated', loadAppointments);
+    return () => window.removeEventListener('sessionStorageUpdated', loadAppointments);
+  }, []);
 
-    // Set doctorData state if storedDoctorData exists
-    if (storedDoctorData) {
-      setDoctorData(storedDoctorData);
-    }
-
-    // Set appointmentData state if storedAppointmentData exists
-    if (storedAppointmentData) {
-      setAppointmentData(storedAppointmentData);
-    }
-  }, []); // Empty dependency array ensures useEffect runs only once after initial render
-
-  // Return JSX elements to display Navbar, children components, and appointment details if user is logged in
   return (
-    <div>
-      {/* Render Navbar component */}
-      <Navbar ></Navbar>
-      {/* Render children components */}
+    <>
+      <Navbar />
       {children}
-      {/* Display appointment details if user is logged in and appointmentData is available */}
-      {isLoggedIn && appointmentData && (
-        <>
-          <div className="appointment-card">
-            <div className="appointment-card__content">
-              {/* Display title for appointment details */}
-              <h3 className="appointment-card__title">Appointment Details</h3>
-              <p className="appointment-card__message">
-                {/* Display doctor's name from doctorData */}
-                <strong>User:</strong> {username}
-                <strong>Doctor:</strong> {doctorData.name}
-                <strong>Date:</strong> {appointmentData.date}
-                <strong>Time:</strong> {appointmentData.time}
-              </p>
-            </div>
+      {visible && appointments.length > 0 && (
+        <div className="appointment-card">
+          <button
+            className="appointment-card__close"
+            onClick={() => setVisible(false)}
+            aria-label="Close notification"
+          >
+            ×
+          </button>
+          <div className="appointment-card__content">
+            <h3 className="appointment-card__title">Your Appointments</h3>
+            {appointments.map(app => (
+              <div key={app.id} className="appointment-card__message">
+                <p><strong>Doctor:</strong> {app.doctor.name} ({app.doctor.speciality})</p>
+                <p><strong>Name:</strong> {app.name}</p>
+                <p><strong>Phone:</strong> {app.phoneNumber}</p>
+                <p><strong>Date:</strong> {app.date}</p>
+                <p><strong>Time:</strong> {app.time}</p>
+              </div>
+            ))}
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
-// Export Notification component for use in other parts of the application
 export default Notification;

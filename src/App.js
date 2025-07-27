@@ -17,14 +17,22 @@ import ReportsLayout from './components/ReportsLayout/ReportsLayout';
 
 
 function App() {
+
+  const handleCreateAppointment = async (formData) => {
+    const res = await fetch('/api/appointments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (!res.ok) console.error('Error creando cita');
+  };
+
   return (
     <div className="App">
         {/* Configurar BrowserRouter para enrutamiento */}
         <BrowserRouter>
-          {/* Mostrar el componente Navbar */}
           <Navbar/>
           <Notification />
-          {/* Configurar las Rutas para diferentes páginas */}
           <Routes>
             {/* Definir componentes Route individuales para diferentes páginas */}
             <Route path="/" element={<Landing_Page />} />
@@ -32,8 +40,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<BestServices />} />
             <Route path="/instant-consultation" element={<ProtectedRoute><InstantConsultation /></ProtectedRoute>} />
-            <Route path="/BookingConsultation" element={<ProtectedRoute><BookingConsultation /></ProtectedRoute>} />
-            <Route path="/notifications" element={<Notification />} />
+            <Route path="/BookingConsultation" element={<ProtectedRoute><BookingConsultation doctorName="Dr. X" doctorSpeciality="Y" onSubmit={handleCreateAppointment} /></ProtectedRoute>} />
             <Route path="/reviews" element={<ProtectedRoute><ReviewForm /></ProtectedRoute>} />
             <Route path="/profile" element={<ProfileForm />} />
             <Route path="/reports" element={<ReportsLayout />} />

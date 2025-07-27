@@ -20,7 +20,27 @@ const AppointmentForm = ({ doctorName, doctorSpeciality, onSubmit }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
+    // ← Aquí guardamos en sessionStorage justo al confirmar
+    sessionStorage.setItem(
+      'doctorData',
+      JSON.stringify({
+        name: doctorName,
+        speciality: doctorSpeciality
+      })
+    );
+    sessionStorage.setItem(
+      'appointmentData',
+      JSON.stringify({
+        date: form.date,
+        time: form.time
+      })
+    );
+
+    // Ahora llamamos al onSubmit que crea la cita en el backend
     onSubmit(form);
+
+    // Limpiamos el formulario
     setForm({ name: '', phoneNumber: '', date: '', time: '' });
   };
 
