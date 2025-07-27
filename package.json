@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rm -rdf server/build && mv build server/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -37,5 +37,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
+    "webpack": "^5.100.2",
+    "webpack-cli": "^6.0.1"
   }
 }
