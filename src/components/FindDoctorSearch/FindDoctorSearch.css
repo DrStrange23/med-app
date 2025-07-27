@@ -35,22 +35,6 @@
     position: relative;
   }
   
-  /* Icono dentro del search-box */
-  .find-doctor__search-icon {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #3b3a3a;
-    border-right: none;
-    background: #efeaea;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-  }
   
   /* Input de búsqueda */
   .find-doctor__input {

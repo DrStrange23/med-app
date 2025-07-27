@@ -1,0 +1,61 @@
+.best-services {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    min-height: 100vh; /* hace que ocupe toda la altura visible */
+    box-sizing: border-box;
+  }
+  
+  .best-services h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .best-services p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 30px;
+  }
+  
+  .service-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .service-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px;
+    width: 270px;
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 300px;
+  }
+  
+  .service-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .service-card img {
+    width: 248px;
+    height: 248px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  
+  .service-card h4 {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  

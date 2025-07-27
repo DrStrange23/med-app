@@ -70,7 +70,6 @@ const Navbar = () => {
         <li className="link"><Link to="/BookingConsultation">Appointments</Link></li>
         <li className="link"><Link to="/healthblog">Health Blog</Link></li>
         <li className="link"><Link to="/Reviews">Reviews</Link></li>
-        <li className="link"><Link to="/instant-consultation">Instant Consultation</Link></li>
 
         {isLoggedIn ? (
           <>
