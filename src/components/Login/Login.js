@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { API_URL } from "../../config";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({ email: false, password: false });
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -39,19 +44,48 @@ const Login = () => {
     setIsFormValid(Object.keys(validationErrors).length === 0);
   }, [form]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError("");
     setIsSubmitting(true);
     setTouched({ email: true, password: true });
+
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // Lógica de login (API)
-      console.log("Autenticando:", form);
+      try {
+        const res = await fetch(`${API_URL}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.authtoken) {
+          sessionStorage.setItem("auth-token", data.authtoken);
+          // volvemos a la raíz y recargamos, como en tu flujo original
+          navigate("/");
+          window.location.reload();
+        } else {
+          setServerError(data.message || "Credenciales inválidas.");
+        }
+      } catch (err) {
+        setServerError("No se pudo conectar al servidor.");
+      } finally {
+        setIsSubmitting(false);
+      }
     } else {
       setIsSubmitting(false);
     }
+  };
+
+  const handleReset = () => {
+    setForm({ email: "", password: "" });
+    setErrors({});
+    setTouched({ email: false, password: false });
+    setServerError("");
+    setIsSubmitting(false);
   };
 
   return (
@@ -68,6 +102,12 @@ const Login = () => {
 
       <div className="login-form">
         <form onSubmit={handleSubmit} noValidate>
+          {serverError && (
+            <div className="server-error">
+              <small className="error">{serverError}</small>
+            </div>
+          )}
+
           {/* Email */}
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -75,7 +115,11 @@ const Login = () => {
               name="email"
               id="email"
               type="email"
-              className={`form-control${errors.email && (touched.email || isSubmitting) ? " error-input" : ""}`}
+              className={`form-control${
+                errors.email && (touched.email || isSubmitting)
+                  ? " error-input"
+                  : ""
+              }`}
               placeholder="Enter your email"
               value={form.email}
               onChange={handleChange}
@@ -93,7 +137,11 @@ const Login = () => {
               name="password"
               id="password"
               type="password"
-              className={`form-control${errors.password && (touched.password || isSubmitting) ? " error-input" : ""}`}
+              className={`form-control${
+                errors.password && (touched.password || isSubmitting)
+                  ? " error-input"
+                  : ""
+              }`}
               placeholder="Enter your password"
               value={form.password}
               onChange={handleChange}
@@ -114,14 +162,9 @@ const Login = () => {
               {isSubmitting ? "Enviando..." : "Login"}
             </button>
             <button
-              type="reset"
+              type="button"
               className="btn btn-danger"
-              onClick={() => {
-                setForm({ email: "", password: "" });
-                setErrors({});
-                setTouched({ email: false, password: false });
-                setIsSubmitting(false);
-              }}
+              onClick={handleReset}
             >
               Reset
             </button>

@@ -1,4 +1,3 @@
-// src/Sign_Up/Sign_Up.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config";
@@ -7,7 +6,6 @@ import "./Sign_Up.css";
 const Sign_Up = () => {
   const navigate = useNavigate();
 
-  // Form state
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -15,25 +13,25 @@ const Sign_Up = () => {
     password: "",
     confirmPassword: "",
   });
-
-  // Validation & UX state
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  // Regex rules
   const validators = {
-    name: (val) => val.trim() ? null : "El nombre es obligatorio.",
-    phone: (val) => /^\d{10}$/.test(val) ? null : "El teléfono debe tener 10 dígitos.",
-    email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? null : "Email inválido.",
-    password: (val) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(val)
-      ? null
-      : "La contraseña debe tener ≥8 carac., mayúscula, min., dígito y especial.",
-    confirmPassword: (val) => val === form.password ? null : "Las contraseñas no coinciden.",
+    name: (val) => (val.trim() ? null : "El nombre es obligatorio."),
+    phone: (val) =>
+      /^\d{10}$/.test(val) ? null : "El teléfono debe tener 10 dígitos.",
+    email: (val) =>
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? null : "Email inválido.",
+    password: (val) =>
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(val)
+        ? null
+        : "La contraseña debe tener ≥8 carac., mayúscula, min., dígito y especial.",
+    confirmPassword: (val) =>
+      val === form.password ? null : "Las contraseñas no coinciden.",
   };
 
-  // Handle change & blur
   const handleChange = ({ target: { name, value } }) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -41,7 +39,6 @@ const Sign_Up = () => {
     setTouched((prev) => ({ ...prev, [name]: true }));
   };
 
-  // Validate form
   useEffect(() => {
     const validationErrors = Object.keys(validators).reduce((acc, field) => {
       const error = validators[field](form[field]);
@@ -51,45 +48,62 @@ const Sign_Up = () => {
     setErrors(validationErrors);
   }, [form]);
 
-  // Register API call
   const register = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await response.json();
-      if (data.authtoken) {
+      const data = await res.json();
+
+      if (res.ok && data.authtoken) {
         sessionStorage.setItem("auth-token", data.authtoken);
-        ["name", "phone", "email"].forEach((key) =>
-          sessionStorage.setItem(key, form[key])
+        ["name", "phone", "email"].forEach((k) =>
+          sessionStorage.setItem(k, form[k])
         );
         navigate("/");
         window.location.reload();
       } else {
         setServerError(
-          data.errors?.map((e) => e.msg).join(" ") || data.error || "Error desconocido"
+          data.errors?.map((e) => e.msg).join(" ") ||
+            data.error ||
+            "Error desconocido."
         );
-        setIsSubmitting(false);
       }
-    } catch (err) {
+    } catch {
       setServerError("No se pudo conectar al servidor.");
+    } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setServerError("");
     setIsSubmitting(true);
     setTouched(
-      Object.keys(form).reduce((acc, field) => ({ ...acc, [field]: true }), {})
+      Object.keys(form).reduce((acc, f) => ({ ...acc, [f]: true }), {})
     );
     if (Object.keys(errors).length === 0) {
       register();
     } else {
       setIsSubmitting(false);
     }
+  };
+
+  const handleReset = () => {
+    setForm({
+      name: "",
+      phone: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setTouched({});
+    setErrors({});
+    setServerError("");
+    setIsSubmitting(false);
   };
 
   return (
@@ -104,12 +118,18 @@ const Sign_Up = () => {
         {serverError && <div className="error server-error">{serverError}</div>}
         {Object.keys(form).map((field) => (
           <div className="form-group" key={field}>
-            <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <label htmlFor={field}>
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+            </label>
             <input
               id={field}
               name={field}
-              type={field.toLowerCase().includes("password") ? "password" : "text"}
-              className={`form-control${errors[field] && touched[field] ? " error-input" : ""}`}
+              type={
+                field.toLowerCase().includes("password") ? "password" : "text"
+              }
+              className={`form-control${
+                errors[field] && touched[field] ? " error-input" : ""
+              }`}
               placeholder={`Enter your ${field}`}
               value={form[field]}
               onChange={handleChange}
@@ -130,13 +150,9 @@ const Sign_Up = () => {
             {isSubmitting ? "Enviando..." : "Submit"}
           </button>
           <button
-            type="reset"
+            type="button"
             className="btn btn-danger"
-            onClick={() => {
-              setForm({ name: "", phone: "", email: "", password: "", confirmPassword: "" });
-              setTouched({});
-              setErrors({});
-            }}
+            onClick={handleReset}
           >
             Reset
           </button>
